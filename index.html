@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Raso Nogori — Resepi, Cerito & Warisan</title>
+<meta name="description" content="Koleksi digital masakan dan kuih-muih tradisional Negeri Sembilan.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://unpkg.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root{
+ --maroon:#7a1820;--deep:#241416;--gold:#c99b45;--cream:#f8f0df;--paper:#fffaf0;
+ --green:#536b45;--muted:#766d62;--line:#eadfc9;--shadow:0 14px 40px rgba(62,34,24,.10);
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:var(--cream);color:var(--deep);font-family:"DM Sans",sans-serif}
+h1,h2,h3,h4{font-family:"Playfair Display",serif;margin:0}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.container{width:min(1180px,92%);margin:auto}
+.topbar{background:var(--deep);color:#fff;padding:9px 0;font-size:13px}
+.topbar .container{display:flex;justify-content:space-between;gap:20px}
+nav{position:sticky;top:0;z-index:1000;background:rgba(255,250,240,.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.navin{height:76px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;gap:11px;text-decoration:none;color:var(--deep)}
+.logo-mark{width:46px;height:46px;border-radius:50%;background:var(--maroon);color:#f7d993;display:grid;place-items:center;font-family:serif;font-size:25px;font-weight:700}
+.logo b{font-family:"Playfair Display";font-size:22px}.logo small{display:block;color:var(--muted);font-size:10px;letter-spacing:1.5px;text-transform:uppercase}
+.navlinks{display:flex;gap:24px;align-items:center}.navlinks a{color:var(--deep);text-decoration:none;font-weight:600;font-size:14px}
+.navlinks a:hover{color:var(--maroon)}
+.nav-actions{display:flex;gap:8px}.iconbtn{border:1px solid var(--line);background:#fffaf2;border-radius:12px;width:42px;height:42px}
+.hero{min-height:610px;display:grid;place-items:center;position:relative;overflow:hidden;background:
+linear-gradient(90deg,rgba(31,16,17,.88),rgba(31,16,17,.45),rgba(31,16,17,.18)),
+url("https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1800&q=85") center/cover}
+.hero:after{content:"";position:absolute;inset:auto 0 0;height:90px;background:linear-gradient(transparent,var(--cream))}
+.hero-content{position:relative;z-index:2;color:#fff;width:min(1180px,92%);padding:90px 0}
+.kicker{letter-spacing:3px;text-transform:uppercase;font-size:12px;font-weight:700;color:#e5bd67;margin-bottom:14px}
+.hero h1{font-size:clamp(54px,8vw,98px);line-height:.9;max-width:700px}
+.hero h1 span{color:#f1ca73}.hero p{font-size:19px;line-height:1.7;max-width:590px;color:#f6eee2}
+.cta{display:inline-flex;align-items:center;gap:10px;background:#d0a04b;color:#211719;border:0;padding:14px 21px;border-radius:13px;font-weight:800;text-decoration:none;margin-right:8px}
+.cta.alt{background:rgba(255,255,255,.12);color:white;border:1px solid rgba(255,255,255,.35)}
+.pattern{height:24px;background:repeating-linear-gradient(135deg,var(--gold) 0 8px,var(--maroon) 8px 16px,var(--deep) 16px 24px);opacity:.9}
+section{padding:76px 0}.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+.section-head h2{font-size:38px}.section-head p{max-width:540px;color:var(--muted);line-height:1.7}
+.kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:15px}
+.kpi{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:23px;box-shadow:var(--shadow)}
+.kpi .num{font:700 34px "Playfair Display";color:var(--maroon)}.kpi span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;overflow:hidden;box-shadow:var(--shadow);transition:.25s}
+.card:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(62,34,24,.16)}
+.food-img{height:220px;background-size:cover;background-position:center;position:relative}
+.badge{position:absolute;left:14px;top:14px;background:#fff8e8;color:var(--maroon);padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.heart{position:absolute;right:14px;top:14px;width:39px;height:39px;border:0;border-radius:50%;background:rgba(255,255,255,.9);font-size:20px;color:var(--maroon)}
+.cardbody{padding:19px}.cardbody h3{font-size:23px;margin-bottom:7px}.meta{font-size:12px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}.cardbody p{font-size:14px;line-height:1.6;color:#5f564d}
+.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:16px}.textbtn{border:0;background:none;color:var(--maroon);font-weight:800}
+.feature{display:grid;grid-template-columns:1.15fr .85fr;border-radius:28px;overflow:hidden;background:var(--deep);color:#fff;box-shadow:var(--shadow)}
+.featureimg{min-height:430px;background:url("https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=1200&q=85") center/cover}
+.featurebody{padding:50px}.featurebody h2{font-size:42px}.featurebody p{color:#d8ccc0;line-height:1.8}.pill{display:inline-block;padding:6px 10px;border-radius:20px;background:#ffffff15;border:1px solid #ffffff22;font-size:11px;margin:4px 4px 4px 0}
+.charts{display:grid;grid-template-columns:1fr 1fr;gap:22px}.chartbox{background:var(--paper);padding:25px;border:1px solid var(--line);border-radius:20px;height:360px}.chartbox h3{margin-bottom:14px}
+#map{height:480px;border-radius:22px;border:5px solid var(--paper);box-shadow:var(--shadow)}
+.map-layout{display:grid;grid-template-columns:1fr 330px;gap:22px}.district-list{display:grid;gap:10px}.district{background:var(--paper);border:1px solid var(--line);padding:15px;border-radius:14px;cursor:pointer}.district strong{display:block}.district small{color:var(--muted)}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:22px}.search{flex:1;min-width:240px;padding:13px 16px;border-radius:12px;border:1px solid var(--line);background:var(--paper);outline:none}.select{padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:var(--paper)}
+.tablewrap{overflow:auto;background:var(--paper);border:1px solid var(--line);border-radius:18px}.table{width:100%;border-collapse:collapse;min-width:760px}.table th,.table td{text-align:left;padding:15px;border-bottom:1px solid var(--line);font-size:13px}.table th{background:#f5ead5;color:var(--maroon);font-size:11px;text-transform:uppercase;letter-spacing:1px}
+.story-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:22px}.story{padding:32px;background:var(--paper);border:1px solid var(--line);border-radius:22px}.story h3{font-size:28px;margin-bottom:10px}.story p{line-height:1.8;color:var(--muted)}
+.quote{background:var(--maroon);color:#fff;padding:38px;border-radius:22px}.quote p{font:italic 25px "Playfair Display";line-height:1.5}.quote small{color:#f1d69a}
+footer{background:var(--deep);color:#fff;padding:55px 0 25px}.footergrid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:40px}.footergrid p{color:#cfc2b8;line-height:1.7}.footergrid a{display:block;color:#d7c9bd;text-decoration:none;margin:9px 0}.copy{border-top:1px solid #ffffff16;margin-top:35px;padding-top:20px;color:#9e9289;font-size:12px}
+.player{position:fixed;right:20px;bottom:20px;z-index:1100;background:var(--deep);color:#fff;padding:12px 15px;border-radius:17px;box-shadow:0 12px 35px #0004;display:flex;align-items:center;gap:10px}.player button{border:0;background:#d3a34f;color:#23191a;border-radius:50%;width:38px;height:38px}.player small{display:block;color:#bfb2a8}
+.modal{position:fixed;inset:0;background:#170e0ecc;z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}.modal.show{display:flex}.modalbox{max-width:850px;width:100%;max-height:90vh;overflow:auto;background:var(--paper);border-radius:24px}.modalimg{height:300px;background-size:cover;background-position:center}.modalbody{padding:30px}.modalclose{float:right;border:0;background:#f0e5d2;border-radius:50%;width:38px;height:38px}.ingredients{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}.ingredient{padding:9px 12px;background:#f5ead8;border-radius:10px;font-size:13px}.steps{counter-reset:step;display:grid;gap:12px}.step{counter-increment:step;display:flex;gap:14px;line-height:1.6}.step:before{content:counter(step,decimal-leading-zero);background:var(--maroon);color:white;min-width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:11px}
+.toast{position:fixed;bottom:85px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--deep);color:#fff;padding:12px 18px;border-radius:12px;z-index:3000;transition:.25s}.toast.show{opacity:1;transform:translateX(-50%)}
+@media(max-width:900px){.navlinks{display:none}.kpis{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,1fr)}.map-layout,.story-grid,.feature{grid-template-columns:1fr}.charts{grid-template-columns:1fr}.footergrid{grid-template-columns:1fr 1fr}.featurebody{padding:32px}}
+@media(max-width:600px){.topbar{display:none}.hero{min-height:600px}.hero h1{font-size:54px}.hero p{font-size:16px}.kpis,.grid{grid-template-columns:1fr}.section-head{display:block}.section-head h2{font-size:31px;margin-bottom:8px}.featureimg{min-height:280px}.chartbox{height:320px}.footergrid{grid-template-columns:1fr}.player{right:10px;bottom:10px}.ingredients{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="container"><span>✦ Koleksi digital warisan makanan Negeri Sembilan</span><span>Menjago raso · Menjago cerito · Menjago warisan</span></div></div>
+
+<nav>
+<div class="container navin">
+<a class="logo" href="#home"><div class="logo-mark">RN</div><div><b>Raso Nogori</b><small>Resepi • Cerito • Warisan</small></div></a>
+<div class="navlinks">
+<a href="#resepi">Resepi</a><a href="#kuih">Kuih-Muih</a><a href="#peta">Jelajah Nogori</a><a href="#statistik">Statistik</a><a href="#cerita">Cerito Warisan</a>
+</div>
+<div class="nav-actions"><button class="iconbtn" onclick="scrollToSection('resepi')">⌕</button><button class="iconbtn" onclick="showFavourites()">♥</button></div>
+</div>
+</nav>
+
+<main id="home">
+<section class="hero">
+<div class="hero-content">
+<div class="kicker">Warisan rasa dari tanah Nogori</div>
+<h1>Raso <span>Nogori</span></h1>
+<p>Resepi, cerito dan warisan masakan Negeri Sembilan — daripada dapur kampung, turun-temurun ke generasi seterusnya.</p>
+<a class="cta" href="#resepi">Teroka Resepi ↗</a>
+<a class="cta alt" href="#peta">Jelajah Nogori</a>
+</div>
+</section>
+<div class="pattern"></div>
+
+<section>
+<div class="container">
+<div class="section-head"><div><div class="kicker">Koleksi kita</div><h2>Warisan yang boleh dirasa</h2></div><p>Direka sebagai sebuah dapur digital — tempat resepi, cerita keluarga, budaya dan bahan tempatan bertemu.</p></div>
+<div class="kpis">
+<div class="kpi"><div class="num" id="kpiRecipes">0</div><span>Resepi</span></div>
+<div class="kpi"><div class="num">10</div><span>Kuih Tradisional</span></div>
+<div class="kpi"><div class="num">7</div><span>Daerah</span></div>
+<div class="kpi"><div class="num">20+</div><span>Bahan Tradisional</span></div>
+<div class="kpi"><div class="num" id="kpiFav">0</div><span>Resepi Disimpan</span></div>
+</div>
+</div>
+</section>
+
+<section id="resepi">
+<div class="container">
+<div class="section-head"><div><div class="kicker">Dapur Nogori</div><h2>Resepi pilihan</h2></div><p>Cari ikut nama, daerah atau bahan. Tekan hati untuk simpan resepi kegemaran.</p></div>
+<div class="controls">
+<input id="search" class="search" placeholder="🔎  Cari resepi, bahan atau daerah..." oninput="renderRecipes()">
+<select id="category" class="select" onchange="renderRecipes()"><option value="">Semua kategori</option><option>Lauk</option><option>Kuih</option><option>Sambal</option><option>Hidangan</option></select>
+<select id="district" class="select" onchange="renderRecipes()"><option value="">Semua daerah</option><option>Kuala Pilah</option><option>Rembau</option><option>Jelebu</option><option>Seremban</option><option>Jempol</option><option>Tampin</option><option>Port Dickson</option></select>
+</div>
+<div class="grid" id="recipeGrid"></div>
+</div>
+</section>
+
+<section>
+<div class="container">
+<div class="feature">
+<div class="featureimg"></div>
+<div class="featurebody">
+<div class="kicker">Resepi hari ini</div><h2>Daging Salai Masak Lemak Cili Api</h2>
+<p>Daging salai, santan dan cili api — kombinasi yang dekat dengan imej masakan Negeri Sembilan. Raso pedas, lemak dan berasap dalam satu periuk.</p>
+<span class="pill">🌶 Pedas</span><span class="pill">🥥 Santan</span><span class="pill">🔥 Salai</span><span class="pill">⏱ 60 min</span>
+<br><br><button class="cta" onclick="openRecipe(1)">Masak Resepi Ini</button>
+</div>
+</div>
+</div>
+</section>
+
+<section id="kuih">
+<div class="container">
+<div class="section-head"><div><div class="kicker">Manih-manih Nogori</div><h2>Kuih-muih tradisional</h2></div><p>Koleksi kuih yang boleh menghidupkan semula memori kenduri, pasar dan dapur nenek.</p></div>
+<div class="grid" id="kuihGrid"></div>
+</div>
+</section>
+
+<section id="statistik">
+<div class="container">
+<div class="section-head"><div><div class="kicker">Warisan dalam data</div><h2>Statistik koleksi</h2></div><p>Gambaran interaktif koleksi resepi. Data demo ini boleh diganti dengan data kajian sebenar.</p></div>
+<div class="charts">
+<div class="chartbox"><h3>Resepi mengikut kategori</h3><canvas id="catChart"></canvas></div>
+<div class="chartbox"><h3>Koleksi mengikut daerah</h3><canvas id="districtChart"></canvas></div>
+<div class="chartbox"><h3>Bahan utama</h3><canvas id="ingredientChart"></canvas></div>
+<div class="chartbox"><h3>Tahap kesukaran</h3><canvas id="difficultyChart"></canvas></div>
+</div>
+</div>
+</section>
+
+<section id="peta">
+<div class="container">
+<div class="section-head"><div><div class="kicker">Jelajah Nogori</div><h2>Raso mengikut daerah</h2></div><p>Pilih daerah untuk melihat koleksi dan cerita berkaitan. Lokasi pada peta ialah titik representasi daerah, bukan alamat sebenar.</p></div>
+<div class="map-layout"><div id="map"></div><div class="district-list" id="districtList"></div></div>
+</div>
+</section>
+
+<section>
+<div class="container">
+<div class="section-head"><div><div class="kicker">Indeks digital</div><h2>Indeks resepi</h2></div><p>Jadual interaktif untuk mencari dan menapis keseluruhan koleksi.</p></div>
+<div class="tablewrap"><table class="table"><thead><tr><th>Resepi</th><th>Kategori</th><th>Daerah</th><th>Bahan utama</th><th>Masa</th><th>Tahap</th></tr></thead><tbody id="recipeTable"></tbody></table></div>
+</div>
+</section>
+
+<section id="cerita">
+<div class="container">
+<div class="section-head"><div><div class="kicker">Cerito dapur</div><h2>Raso & adat</h2></div><p>Makanan bukan hanya tentang resepi — ia juga tentang keluarga, komuniti, kenduri dan memori.</p></div>
+<div class="story-grid">
+<div class="story"><h3>Dari dapur ke generasi</h3><p>Dalam banyak keluarga, resepi bukan sekadar sukatan. Ia dipelajari melalui mata dan tangan — berapa banyak santan, bila api dikecilkan, bila kuah sudah cukup pecah minyak.</p><p>Ruang ini boleh diisi dengan kisah sebenar daripada pemilik resepi, tukang masak kampung, komuniti dan sumber dokumentasi yang disahkan.</p><button class="cta" onclick="toast('Ruang cerita boleh dikembangkan dengan koleksi kisah sebenar.')">Baca Cerito</button></div>
+<div class="quote"><div class="kicker">Suara Nogori</div><p>“Masak slow-slow, baru naik raso. Jangan gelojoh nak besaukan api.”</p><small>— Contoh microcopy; bukan petikan sumber sejarah</small></div>
+</div>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="container">
+<div class="footergrid">
+<div><h2>Raso Nogori</h2><p>Menjago raso. Menjago cerito. Menjago warisan.</p></div>
+<div><h4>Jelajah</h4><a href="#resepi">Resepi</a><a href="#kuih">Kuih-Muih</a><a href="#peta">Jelajah Nogori</a><a href="#statistik">Statistik</a></div>
+<div><h4>Tentang</h4><a href="#cerita">Cerito Warisan</a><a href="#">Sumber & Rujukan</a><a href="#">Cadangkan Resepi</a></div>
+</div>
+<div class="copy">© 2026 Raso Nogori · Prototype digital heritage · Data contoh perlu disahkan sebelum penerbitan rasmi.</div>
+</div>
+</footer>
+
+<div class="player"><button onclick="toggleMusic()" id="musicBtn">▶</button><div><b>Suasana Nogori</b><small id="musicText">Music player — tambah fail audio sendiri</small></div></div>
+
+<div class="modal" id="modal"><div class="modalbox"><div class="modalimg" id="modalImg"></div><div class="modalbody"><button class="modalclose" onclick="closeModal()">✕</button><div class="kicker" id="modalCat"></div><h2 id="modalTitle"></h2><p id="modalDesc"></p><div class="meta" id="modalMeta"></div><h3 style="margin-top:25px">Bahan-bahan</h3><div class="ingredients" id="modalIngredients"></div><h3>Cara memasak</h3><div class="steps" id="modalSteps"></div></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const img=[
+"https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80",
+"https://images.unsplash.com/photo-1601050690117-94f5f6fa8bd7?auto=format&fit=crop&w=900&q=80",
+"https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=900&q=80",
+"https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=900&q=80",
+"https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=900&q=80",
+"https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=900&q=80"
+];
+const recipes=[
+{id:1,name:"Daging Salai Masak Lemak Cili Api",category:"Lauk",district:"Kuala Pilah",difficulty:"Sederhana",time:"60 min",ingredient:"Daging, santan, cili api",image:img[0],desc:"Hidangan berlemak dan pedas dengan aroma daging salai.",ingredients:["500g daging salai","2 cawan santan","15–20 biji cili api","1 inci kunyit hidup","1 batang serai","Garam secukup rasa"],steps:["Tumbuk cili api bersama kunyit hingga lumat.","Masukkan bahan tumbuk, serai dan santan ke dalam periuk.","Masukkan daging salai dan masak atas api sederhana.","Kacau perlahan hingga kuah sebati dan cukup rasa.","Hidangkan bersama nasi panas."]},
+{id:2,name:"Masak Lemak Cili Api Ayam Kampung",category:"Lauk",district:"Rembau",difficulty:"Mudah",time:"45 min",ingredient:"Ayam, santan, cili api",image:img[1],desc:"Antara gaya masak lemak yang sinonim dengan raso Nogori.",ingredients:["1 ekor ayam","2 cawan santan","Cili api","Kunyit","Serai","Garam"],steps:["Bersihkan ayam.","Kisar/tumbuk cili api dan kunyit.","Masak bahan tumbuk dengan santan dan serai.","Masukkan ayam dan reneh sehingga empuk.","Perasakan dan hidangkan."]},
+{id:3,name:"Sambal Hitam Belimbing Buluh",category:"Sambal",district:"Jelebu",difficulty:"Sederhana",time:"90 min",ingredient:"Belimbing buluh, ikan bilis",image:img[2],desc:"Sambal masam, pedas dan pekat yang sesuai sebagai pelengkap nasi.",ingredients:["Belimbing buluh","Ikan bilis","Cili api","Bawang","Gula dan garam"],steps:["Rebus belimbing sehingga lembut dan toskan.","Tumbuk cili, bawang dan ikan bilis.","Masak semuanya dengan api perlahan.","Kacau sehingga pekat dan gelap.","Sejukkan sebelum disimpan."]},
+{id:4,name:"Gulai Lemak Tempoyak Ikan",category:"Lauk",district:"Jempol",difficulty:"Sederhana",time:"40 min",ingredient:"Ikan, tempoyak, santan",image:img[3],desc:"Kuah lemak masam-manis dengan aroma tempoyak.",ingredients:["Ikan segar","Tempoyak","Santan","Cili api","Kunyit","Daun kunyit"],steps:["Tumbuk cili api dan kunyit.","Campurkan dengan santan dan tempoyak.","Masukkan ikan selepas kuah mendidih perlahan.","Tambah daun kunyit.","Masak sehingga ikan sempurna."]},
+{id:5,name:"Apam Johol",category:"Kuih",district:"Kuala Pilah",difficulty:"Sederhana",time:"45 min",ingredient:"Tepung, gula, kelapa",image:img[4],desc:"Kuih tradisional yang boleh diketengahkan sebagai sebahagian koleksi warisan.",ingredients:["Tepung beras","Gula","Kelapa","Air","Daun pisang"],steps:["Sediakan adunan sehingga sebati.","Peram mengikut kaedah resipi yang digunakan.","Bungkus atau acukan adunan.","Kukus sehingga masak.","Sejukkan sebelum dihidang."]},
+{id:6,name:"Kuih Koci",category:"Kuih",district:"Seremban",difficulty:"Mudah",time:"50 min",ingredient:"Tepung pulut, kelapa, gula Melaka",image:img[5],desc:"Kuih pulut berinti kelapa manis yang popular dalam tradisi kuih Melayu.",ingredients:["Tepung pulut","Kelapa parut","Gula Melaka","Santan","Daun pisang"],steps:["Uli tepung pulut dengan air sehingga boleh dibentuk.","Masak inti kelapa dan gula Melaka.","Bungkus inti dengan doh pulut.","Balut menggunakan daun pisang.","Kukus sehingga masak."]},
+{id:7,name:"Lemang Tradisional",category:"Hidangan",district:"Tampin",difficulty:"Mahir",time:"180 min",ingredient:"Pulut, santan",image:img[0],desc:"Hidangan yang sering dikaitkan dengan suasana kenduri dan perayaan.",ingredients:["Beras pulut","Santan","Garam","Buluh","Daun pisang"],steps:["Cuci dan toskan pulut.","Lapik buluh dengan daun pisang.","Masukkan pulut dan santan.","Bakar sambil dipusing secara berkala.","Sejukkan sedikit sebelum dipotong."]},
+{id:8,name:"Rendang Tok",category:"Lauk",district:"Port Dickson",difficulty:"Mahir",time:"150 min",ingredient:"Daging, santan, rempah",image:img[1],desc:"Rendang pekat dengan proses memasak yang memerlukan kesabaran.",ingredients:["Daging","Santan","Serai","Lengkuas","Cili","Rempah"],steps:["Tumis bahan kisar hingga wangi.","Masukkan daging dan santan.","Masak perlahan sambil dikacau.","Teruskan sehingga kuah pekat.","Perasakan dan hidangkan."]}
+];
+const kuih=recipes.filter(x=>x.category==="Kuih").concat([
+{id:9,name:"Kuih Sopang",category:"Kuih",district:"Rembau",difficulty:"Sederhana",time:"55 min",ingredient:"Tepung, kelapa, gula",image:img[4],desc:"Contoh rekod koleksi — sumber dan kaedah perlu disahkan sebelum penerbitan.",ingredients:["Tepung","Kelapa","Gula","Santan"],steps:["Sediakan doh.","Sediakan inti.","Bentuk kuih.","Kukus sehingga masak."]},
+{id:10,name:"Kuih Lopes",category:"Kuih",district:"Jelebu",difficulty:"Mudah",time:"45 min",ingredient:"Pulut, kelapa, gula Melaka",image:img[5],desc:"Contoh rekod koleksi kuih tradisional.",ingredients:["Beras pulut","Kelapa","Gula Melaka"],steps:["Masak pulut.","Bentuk dan sejukkan.","Salut kelapa.","Hidang dengan gula Melaka."]},
+{id:11,name:"Tepung Bungkus",category:"Kuih",district:"Seremban",difficulty:"Sederhana",time:"50 min",ingredient:"Tepung, santan, gula",image:img[4],desc:"Contoh rekod koleksi kuih tradisional.",ingredients:["Tepung","Santan","Gula","Daun pisang"],steps:["Sediakan adunan.","Masak inti.","Bungkus dengan daun pisang.","Kukus."]}
+]);
+let favs=JSON.parse(localStorage.getItem("rasoNogoriFavs")||"[]");
+
+function renderRecipes(){
+ const q=document.getElementById("search").value.toLowerCase(), cat=document.getElementById("category").value, dis=document.getElementById("district").value;
+ const list=recipes.filter(r=>(!q||(r.name+" "+r.ingredient+" "+r.district).toLowerCase().includes(q))&&(!cat||r.category===cat)&&(!dis||r.district===dis));
+ document.getElementById("recipeGrid").innerHTML=list.map(card).join("");
+ document.getElementById("recipeTable").innerHTML=list.map(r=>`<tr><td><b>${r.name}</b></td><td>${r.category}</td><td>${r.district}</td><td>${r.ingredient}</td><td>${r.time}</td><td>${r.difficulty}</td></tr>`).join("");
+}
+function card(r){
+ const saved=favs.includes(r.id);
+ return `<article class="card"><div class="food-img" style="background-image:url('${r.image}')"><span class="badge">${r.category}</span><button class="heart" onclick="event.stopPropagation();toggleFav(${r.id})">${saved?"♥":"♡"}</button></div><div class="cardbody"><h3>${r.name}</h3><div class="meta"><span>📍 ${r.district}</span><span>⏱ ${r.time}</span><span>• ${r.difficulty}</span></div><p>${r.desc}</p><div class="cardfoot"><button class="textbtn" onclick="openRecipe(${r.id})">Lihat resepi →</button><small>${saved?"Disimpan":"♡ Simpan"}</small></div></div></article>`;
+}
+function renderKuih(){document.getElementById("kuihGrid").innerHTML=kuih.map(card).join("")}
+function toggleFav(id){favs=favs.includes(id)?favs.filter(x=>x!==id):[...favs,id];localStorage.setItem("rasoNogoriFavs",JSON.stringify(favs));renderRecipes();renderKuih();updateFav();toast(favs.includes(id)?"Disimpan dalam koleksi den ♥":"Dibuang daripada koleksi.");}
+function updateFav(){document.getElementById("kpiFav").textContent=favs.length}
+function showFavourites(){const list=recipes.filter(r=>favs.includes(r.id));toast(list.length?`${list.length} resepi disimpan.`:"Belum ada resepi disimpan.");document.getElementById("search").value="";document.getElementById("category").value="";document.getElementById("district").value="";document.getElementById("recipeGrid").innerHTML=list.length?list.map(card).join(""):"<p>Belum ada resepi kegemaran. Tekan ♡ pada mana-mana resepi.</p>";document.getElementById("resepi").scrollIntoView({behavior:"smooth"})}
+function openRecipe(id){const r=[...recipes,...kuih].find(x=>x.id===id);if(!r)return;document.getElementById("modalImg").style.backgroundImage=`url('${r.image}')`;document.getElementById("modalCat").textContent=`${r.category} · ${r.district}`;document.getElementById("modalTitle").textContent=r.name;document.getElementById("modalDesc").textContent=r.desc;document.getElementById("modalMeta").innerHTML=`<span>⏱ ${r.time}</span><span>🌶 ${r.difficulty}</span><span>📍 ${r.district}</span>`;document.getElementById("modalIngredients").innerHTML=r.ingredients.map(i=>`<div class="ingredient">✓ ${i}</div>`).join("");document.getElementById("modalSteps").innerHTML=r.steps.map(s=>`<div class="step">${s}</div>`).join("");document.getElementById("modal").classList.add("show")}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+document.getElementById("modal").addEventListener("click",e=>{if(e.target.id==="modal")closeModal()});
+function toast(t){const x=document.getElementById("toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),2200)}
+function scrollToSection(id){document.getElementById(id).scrollIntoView({behavior:"smooth"})}
+
+let map=L.map("map",{scrollWheelZoom:false}).setView([2.65,102.25],9);
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap contributors"}).addTo(map);
+const districts=[
+["Kuala Pilah",2.738,102.250,5],["Rembau",2.585,102.090,2],["Jelebu",2.95,102.07,1],["Seremban",2.729,101.938,2],["Jempol",2.96,102.42,1],["Tampin",2.47,102.23,1],["Port Dickson",2.52,101.80,1]
+];
+districts.forEach(d=>L.marker([d[1],d[2]]).addTo(map).bindPopup(`<b>${d[0]}</b><br>${d[3]} rekod dalam demo`).on("click",()=>filterDistrict(d[0])));
+document.getElementById("districtList").innerHTML=districts.map(d=>`<div class="district" onclick="filterDistrict('${d[0]}')"><strong>${d[0]}</strong><small>${d[3]} rekod demo · klik untuk tapis resepi</small></div>`).join("");
+function filterDistrict(d){document.getElementById("district").value=d;renderRecipes();scrollToSection("resepi");toast("Menapis koleksi: "+d)}
+
+new Chart(document.getElementById("catChart"),{type:"doughnut",data:{labels:["Lauk","Kuih","Sambal","Hidangan"],datasets:[{data:[5,3,1,1],borderWidth:3}]},options:{plugins:{legend:{position:"bottom"}}}});
+new Chart(document.getElementById("districtChart"),{type:"bar",data:{labels:districts.map(d=>d[0]),datasets:[{label:"Rekod",data:districts.map(d=>d[3]),borderRadius:7}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{stepSize:1}}}}});
+new Chart(document.getElementById("ingredientChart"),{type:"bar",data:{labels:["Cili api","Santan","Kunyit","Serai","Kelapa","Daging"],datasets:[{label:"Penggunaan",data:[7,6,5,4,4,3],borderRadius:7}]},options:{indexAxis:"y",plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}});
+new Chart(document.getElementById("difficultyChart"),{type:"doughnut",data:{labels:["Mudah","Sederhana","Mahir"],datasets:[{data:[3,6,2],borderWidth:3}]},options:{plugins:{legend:{position:"bottom"}}}});
+
+let playing=false;
+function toggleMusic(){playing=!playing;document.getElementById("musicBtn").textContent=playing?"❚❚":"▶";document.getElementById("musicText").textContent=playing?"Demo player aktif — tambah fail audio untuk muzik sebenar":"Music player — tambah fail audio sendiri";toast(playing?"Player aktif. Tambah fail audio sendiri untuk muzik.":"Player dihentikan.");}
+
+document.getElementById("kpiRecipes").textContent=recipes.length;
+renderRecipes();renderKuih();updateFav();
+</script>
+</body>
+</html>
